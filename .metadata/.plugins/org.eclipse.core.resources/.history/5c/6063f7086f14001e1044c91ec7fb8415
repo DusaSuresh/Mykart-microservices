@@ -1,0 +1,14 @@
+package com.mykart.service;
+
+import org.springframework.stereotype.Service;
+
+import com.mykart.entity.Inventory;
+
+@Service
+public interface InventoryService {
+
+	Inventory saveInventory(Inventory inventory);
+
+	Inventory getInventory(Long inventoryId);
+
+}

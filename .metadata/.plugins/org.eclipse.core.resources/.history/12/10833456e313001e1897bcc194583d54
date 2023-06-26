@@ -1,0 +1,4 @@
+FROM openjdk:17
+EXPOSE 9000
+ADD target/mykart-order-service.jar mykart-order-service.jar
+ENTRYPOINT ["java", "-jar", "/mykart-order-service.jar"]

@@ -1,0 +1,38 @@
+package com.mykart.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.mykart.entity.Order;
+import com.mykart.service.OrderService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RestController
+@RequestMapping("/products")
+@Slf4j
+public class OrderController {
+	
+	@Autowired
+	@Qualifier("productImpl")
+	OrderService productService;
+	
+	@PostMapping
+	public Order saveProduct(@RequestBody Order product) {
+		log.info("Inside saveProduct method of Product Controller");
+		return productService.saveProduct(product);
+	}
+	
+	@GetMapping("/{id}")
+	public Order getProduct(@PathVariable("id") Long productId) {
+		log.info("Inside getProduct method of Product controller");
+		return productService.getProduct(productId);
+	}
+
+}

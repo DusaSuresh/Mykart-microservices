@@ -1,0 +1,20 @@
+package com.mykart.service;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.mykart.entity.Order;
+import com.mykart.entity.OrderResponse;
+
+@Service
+public interface OrderService {
+
+	ResponseEntity<Order> saveOrder(Order order);
+
+	ResponseEntity<OrderResponse> getOrder(Long orderId);
+	
+	ResponseEntity<String> updateOrder(Long orderid, Order order);
+
+	ResponseEntity<String> deleteOrder(Long orderId);
+
+}

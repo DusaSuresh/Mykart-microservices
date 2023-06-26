@@ -1,0 +1,110 @@
+package com.mykart.serviceImpl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestTemplate;
+
+import com.mykart.entity.Customer;
+import com.mykart.entity.Order;
+import com.mykart.entity.OrderResponse;
+import com.mykart.entity.Payment;
+import com.mykart.entity.Product;
+import com.mykart.repository.OrderRepository;
+import com.mykart.service.OrderService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
+@Component("orderImpl")
+public class OrderServiceImpl implements OrderService{
+	
+	@Autowired
+	OrderRepository orderRepository;
+	
+	@Autowired
+	RestTemplate restTemplate;
+	
+	@Override
+	public ResponseEntity<Order> saveOrder(Order order) {
+		log.info("Inside saveorder method of order service implementation");
+		return new ResponseEntity<>(orderRepository.save(order), HttpStatus.CREATED);
+	}
+
+	@Override
+	public ResponseEntity<OrderResponse> getOrder(Long orderId) {
+		log.info("Inside getorder method of order service implementation");
+		Optional<Order> orderOptional = orderRepository.findById(orderId);
+		OrderResponse orderResponse = new OrderResponse();
+		Order order = new Order();
+		
+		if(orderOptional.isPresent()) {
+			order = orderOptional.get();
+			orderResponse.setOrder(order);
+		}
+		
+		//Below commented code before creating service discovery and providing service name
+		//Customer customer = restTemplate.getForObject("http://localhost:9002/customers/"+order.getCustomerId(), Customer.class);
+		
+		Customer customer = restTemplate.getForObject("http://CUSTOMER-SERVICE/customers/"+order.getCustomerId(), Customer.class);
+		orderResponse.setCustomer(customer);
+		
+		List<Product> productList = new ArrayList();
+		
+		for(Long productId: order.getProductList()) {
+			
+			//Below commented code before creating service discovery and providing service name
+			//Product product = restTemplate.getForObject("http://localhost:9000/products/"+productId, Product.class);
+			
+			Product product = restTemplate.getForObject("http://PRODUCT-SERVICE/products/"+productId, Product.class);
+			productList.add(product);
+		}
+		
+		orderResponse.setProduct(productList);
+		return new ResponseEntity<>(orderResponse, HttpStatus.ACCEPTED);
+	} 
+	
+	public ResponseEntity<String> updateOrder(Long orderId, @Valid Order updatedOrder) {
+		// Retrieve the orderId from the repository
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+
+        // Check if the order exists
+        if (optionalOrder.isPresent()) {
+            Order existingOrder = optionalOrder.get();
+
+            // Update the order
+            existingOrder.setStatus(updatedOrder.getStatus());
+            existingOrder.setOrderDate(updatedOrder.getOrderDate());
+
+            // Save the updated order using the repository
+            orderRepository.save(existingOrder);
+
+            // Return success response
+            return ResponseEntity.ok("Order updated successfully");
+        } else {
+            // Return a not found response
+            return ResponseEntity.notFound().build();
+        }
+
+	}
+	
+	@Override
+	public ResponseEntity<String> deletePayment(Long paymentId) {
+		log.info("Inside deleteProduct method of Product service implementation");
+		paymentRepository.deleteById(paymentId);
+		return new ResponseEntity<>("Successfully deleted", HttpStatus.ACCEPTED);
+	}
+
+	
+	
+
+}

@@ -1,0 +1,70 @@
+package com.mykart.serviceImpl;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.mykart.entity.Product;
+import com.mykart.repository.ProductRepository;
+import com.mykart.service.ProductService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
+@Component("productImpl")
+public class ProductServiceImpl implements ProductService{
+	
+	@Autowired
+	ProductRepository productRepository;
+
+	@Override
+	public ResponseEntity<Product> saveProduct(Product product) {
+		log.info("Inside saveProduct method of Product service implementation");
+		return new ResponseEntity<>(productRepository.save(product), HttpStatus.CREATED);
+	}
+
+	@Override
+	public ResponseEntity<Product> getProduct(Long productId) {
+		log.info("Inside getProduct method of Product service implementation");
+		Optional<Product> productOptional = productRepository.findById(productId);
+		if(productOptional.isPresent()) {
+			return  new ResponseEntity<>(productOptional.get(), HttpStatus.ACCEPTED);
+		}else {
+			return new ResponseEntity<>(productOptional.get(), HttpStatus.ACCEPTED);
+		}
+	} 
+	
+	public ResponseEntity<String> updateProduct(Long productId, @Valid Product updatedProduct) {
+		// Retrieve the product from the repository
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+
+        // Check if the product exists
+        if (optionalProduct.isPresent()) {
+            Product existingProduct = optionalProduct.get();
+
+            // Update the Product
+            existingProduct.setProductName(updatedProduct.getProductName());
+            existingProduct.setDescription(updatedProduct.getDescription());
+
+            // Save the updated product using the repository
+            productRepository.save(existingProduct);
+
+            // Return success response
+            return ResponseEntity.ok("Order updated successfully");
+        } else {
+            // Return a not found response
+            return ResponseEntity.notFound().build();
+        }
+
+	}
+
+	
+	
+
+}

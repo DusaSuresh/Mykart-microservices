@@ -1,0 +1,42 @@
+package com.mykart.serviceImpl;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.mykart.entity.Customer;
+import com.mykart.repository.ProductRepository;
+import com.mykart.service.ProductService;
+
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
+@Component("productImpl")
+public class ProductServiceImpl implements ProductService{
+	
+	@Autowired
+	ProductRepository productRepository;
+
+	@Override
+	public Customer saveProduct(Customer product) {
+		log.info("Inside saveProduct method of Product service implementation");
+		return productRepository.save(product);
+	}
+
+	@Override
+	public Customer getProduct(Long productId) {
+		log.info("Inside getProduct method of Product service implementation");
+		Optional<Customer> productOptional = productRepository.findById(productId);
+		if(productOptional.isPresent()) {
+			return productOptional.get();
+		}else {
+			return null;
+		}
+	} 
+	
+	
+
+}

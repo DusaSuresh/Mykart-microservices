@@ -1,0 +1,15 @@
+package com.mykart.service;
+
+import org.springframework.stereotype.Service;
+
+import com.mykart.entity.Order;
+import com.mykart.entity.OrderResponse;
+
+@Service
+public interface OrderService {
+
+	Order saveOrder(Order order);
+
+	OrderResponse getOrder(Long orderId);
+
+}

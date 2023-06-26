@@ -1,0 +1,14 @@
+package com.mykart.service;
+
+import org.springframework.stereotype.Service;
+
+import com.mykart.entity.Payment;
+
+@Service
+public interface ProductService {
+
+	Payment saveProduct(Payment product);
+
+	Payment getProduct(Long productId);
+
+}

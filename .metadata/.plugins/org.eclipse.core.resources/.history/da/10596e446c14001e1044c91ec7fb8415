@@ -1,0 +1,78 @@
+package com.mykart.serviceImpl;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.mykart.entity.Payment;
+import com.mykart.entity.Product;
+import com.mykart.repository.PaymentRepository;
+import com.mykart.service.PaymentService;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
+@Component("paymentImpl")
+public class PaymentServiceImpl implements PaymentService{
+	
+	@Autowired
+	PaymentRepository paymentRepository;
+
+	@Override
+	public ResponseEntity<Payment> savePayment(Payment payment) {
+		log.info("Inside savepayment method of payment service implementation");
+		return new ResponseEntity<>(paymentRepository.save(payment), HttpStatus.CREATED);
+	}
+
+	@Override
+	public ResponseEntity<Payment> getPayment(Long paymentId) {
+		log.info("Inside getpayment method of payment service implementation");
+		Optional<Payment> paymentOptional = paymentRepository.findById(paymentId);
+		if(paymentOptional.isPresent()) {
+			return new ResponseEntity<>(paymentOptional.get(), HttpStatus.ACCEPTED);
+		}else {
+			return null;
+		}
+	} 
+	
+	public ResponseEntity<String> updateProduct(Long paymentId, @Valid Payment updatedProduct) {
+		// Retrieve the paymentId from the repository
+        Optional<Payment> optionalPayment = paymentRepository.findById(paymentId);
+
+        // Check if the payment exists
+        if (optionalProduct.isPresent()) {
+            Product existingProduct = optionalProduct.get();
+
+            // Update the payment
+            existingProduct.setProductName(updatedProduct.getProductName());
+            existingProduct.setDescription(updatedProduct.getDescription());
+
+            // Save the updated payment using the repository
+            productRepository.save(existingProduct);
+
+            // Return success response
+            return ResponseEntity.ok("Order updated successfully");
+        } else {
+            // Return a not found response
+            return ResponseEntity.notFound().build();
+        }
+
+	}
+	
+	@Override
+	public ResponseEntity<String> delete(Long productId) {
+		log.info("Inside deleteProduct method of Product service implementation");
+		productRepository.deleteById(productId);
+		return new ResponseEntity<>("Successfully deleted", HttpStatus.ACCEPTED);
+	}
+
+	
+	
+
+}

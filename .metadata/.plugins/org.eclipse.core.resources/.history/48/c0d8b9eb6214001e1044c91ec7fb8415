@@ -1,0 +1,19 @@
+package com.mykart.service;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.mykart.entity.Product;
+
+@Service
+public interface ProductService {
+
+	ResponseEntity<Product> saveProduct(Product product);
+
+	ResponseEntity<Product> getProduct(Long productId);
+	
+	ResponseEntity<Product> updatedProduct(Long productId, Product product);
+
+	ResponseEntity<String> deleteProduct(Long productId);
+
+}
